@@ -64,12 +64,12 @@ public class FeishuNotifier : INotifier
 
     private async Task<StringContent> TransformData(BaseNotificationData notificationData)
     {
-        Object feishuMessage;
+        String serializedData;
         if (notificationData.Screenshot != null && AppId.Length > 0 && AppSecret.Length > 0)
         {
             var accessToken = await GetAccessToken();
             var imageKey = await UploadImage(notificationData.Screenshot, accessToken);
-            feishuMessage = new
+            Object feishuMessage = new
             {
                 msg_type = "post",
                 content = new
@@ -94,19 +94,13 @@ public class FeishuNotifier : INotifier
                     }
                 }
             };
+            serializedData = JsonSerializer.Serialize(feishuMessage);
         }
         else
         {
-            feishuMessage = new
-            {
-                msg_type = "text",
-                content = new
-                {
-                    text = notificationData.Message
-                }
-            };
+            serializedData = notificationData.Message ?? "{}";
         }
-        var serializedData = JsonSerializer.Serialize(feishuMessage);
+        
         return new StringContent(serializedData, Encoding.UTF8, "application/json");
     }
 
