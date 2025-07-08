@@ -8,8 +8,11 @@ using BetterGenshinImpact.Service.Notification.Model;
 using System.IO;
 using System.Net.Http.Headers;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BetterGenshinImpact.Service.Notifier;
 
@@ -62,14 +65,37 @@ public class FeishuNotifier : INotifier
         }
     }
 
+    private bool IsValidJson(string jsonString)
+    {
+        if (string.IsNullOrEmpty(jsonString))
+        {
+            return false;
+        }
+        
+        try
+        {
+            var obj = JObject.Parse(jsonString);
+        }
+        catch (JsonReaderException)
+        {
+            return false;
+        }
+        return true;
+    }
+    
     private async Task<StringContent> TransformData(BaseNotificationData notificationData)
     {
-        String serializedData;
+        if (IsValidJson(notificationData.Message ?? ""))
+        {
+            return new StringContent(notificationData.Message ?? "{}", Encoding.UTF8, "application/json");   
+        }
+        
+        Object feishuMessage;
         if (notificationData.Screenshot != null && AppId.Length > 0 && AppSecret.Length > 0)
         {
             var accessToken = await GetAccessToken();
             var imageKey = await UploadImage(notificationData.Screenshot, accessToken);
-            Object feishuMessage = new
+            feishuMessage = new
             {
                 msg_type = "post",
                 content = new
@@ -94,13 +120,20 @@ public class FeishuNotifier : INotifier
                     }
                 }
             };
-            serializedData = JsonSerializer.Serialize(feishuMessage);
         }
         else
         {
-            serializedData = notificationData.Message ?? "{}";
+            feishuMessage = new
+            {
+                msg_type = "text",
+                content = new
+                {
+                    text = notificationData.Message,
+                    result = IsValidJson(notificationData.Message) ? "true" : "false"
+                }
+            };
         }
-        
+        var serializedData = JsonSerializer.Serialize(feishuMessage);
         return new StringContent(serializedData, Encoding.UTF8, "application/json");
     }
 
