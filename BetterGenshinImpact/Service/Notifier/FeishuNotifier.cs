@@ -8,11 +8,8 @@ using BetterGenshinImpact.Service.Notification.Model;
 using System.IO;
 using System.Net.Http.Headers;
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BetterGenshinImpact.Service.Notifier;
 
@@ -71,12 +68,11 @@ public class FeishuNotifier : INotifier
         {
             return false;
         }
-        
         try
         {
-            var obj = JObject.Parse(jsonString);
+            JsonDocument.Parse(jsonString);
         }
-        catch (JsonReaderException)
+        catch (JsonException)
         {
             return false;
         }
@@ -128,8 +124,7 @@ public class FeishuNotifier : INotifier
                 msg_type = "text",
                 content = new
                 {
-                    text = notificationData.Message,
-                    result = IsValidJson(notificationData.Message) ? "true" : "false"
+                    text = notificationData.Message
                 }
             };
         }
