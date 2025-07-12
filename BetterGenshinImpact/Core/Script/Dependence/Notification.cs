@@ -38,7 +38,7 @@ public class Notification
 
     private bool ValidateContent(string message)   // 不允许发送超过 500 字符的消息
     {
-        if (message.Length > 500) return false;
+        // if (message.Length > 500) return false;
     
         return !_forbiddenPatterns
             .Any(p => message.IndexOf(p, StringComparison.OrdinalIgnoreCase) >= 0);

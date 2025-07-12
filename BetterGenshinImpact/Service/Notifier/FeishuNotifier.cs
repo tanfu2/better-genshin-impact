@@ -62,30 +62,8 @@ public class FeishuNotifier : INotifier
         }
     }
 
-    private bool IsValidJson(string jsonString)
-    {
-        if (string.IsNullOrEmpty(jsonString))
-        {
-            return false;
-        }
-        try
-        {
-            JsonDocument.Parse(jsonString);
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
-        return true;
-    }
-    
     private async Task<StringContent> TransformData(BaseNotificationData notificationData)
     {
-        if (IsValidJson(notificationData.Message ?? ""))
-        {
-            return new StringContent(notificationData.Message ?? "{}", Encoding.UTF8, "application/json");   
-        }
-        
         Object feishuMessage;
         if (notificationData.Screenshot != null && AppId.Length > 0 && AppSecret.Length > 0)
         {
@@ -119,14 +97,36 @@ public class FeishuNotifier : INotifier
         }
         else
         {
-            feishuMessage = new
+            bool validJson = true;
+            JsonDocument? doc = null;
+            try
             {
-                msg_type = "text",
-                content = new
+                doc = JsonDocument.Parse(notificationData.Message ?? "");
+            }
+            catch (JsonException)
+            {
+                validJson = false;
+            }
+
+            if (validJson)
+            {
+                feishuMessage = new
                 {
-                    text = notificationData.Message
-                }
-            };
+                    msg_type = "text",
+                    content = doc
+                };
+            }
+            else
+            {
+                feishuMessage = new
+                {
+                    msg_type = "text",
+                    content = new
+                    {
+                        text = notificationData.Message
+                    }
+                };
+            }
         }
         var serializedData = JsonSerializer.Serialize(feishuMessage);
         return new StringContent(serializedData, Encoding.UTF8, "application/json");
