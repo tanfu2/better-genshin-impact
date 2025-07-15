@@ -97,23 +97,23 @@ public class FeishuNotifier : INotifier
         }
         else
         {
-            bool validJson = true;
-            JsonDocument? doc = null;
+            bool isValidJson = true;
+            JsonElement jsonElement = new JsonElement();
             try
             {
-                doc = JsonDocument.Parse(notificationData.Message ?? "");
+                jsonElement = JsonSerializer.Deserialize<JsonElement>(notificationData.Message ?? "");
             }
             catch (JsonException)
             {
-                validJson = false;
+                isValidJson = false;
             }
 
-            if (validJson)
+            if (isValidJson)
             {
                 feishuMessage = new
                 {
                     msg_type = "text",
-                    content = doc
+                    content = jsonElement
                 };
             }
             else
