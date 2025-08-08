@@ -64,7 +64,8 @@ public partial class TriggerSettingsPageViewModel : ViewModel
         {
             TextWrapping = TextWrapping.Wrap,
             AcceptsReturn = true,
-            Height = 340,
+            //Height = 340,
+            VerticalAlignment = VerticalAlignment.Stretch,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             PlaceholderText = "请在此输入黑名单配置，每行一条记录。\n" +
                               "示例：\n" +
@@ -81,7 +82,7 @@ public partial class TriggerSettingsPageViewModel : ViewModel
         p.ShowDialog();
         if (p.DialogResult == true)
         {
-            File.WriteAllText(path, multilineTextBox.Text);
+            File.WriteAllText(Global.Absolute(path), multilineTextBox.Text);
             GameTaskManager.RefreshTriggerConfigs();
         }
     }
@@ -100,7 +101,8 @@ public partial class TriggerSettingsPageViewModel : ViewModel
         {
             TextWrapping = TextWrapping.Wrap,
             AcceptsReturn = true,
-            Height = 340,
+            //Height = 340,
+            VerticalAlignment = VerticalAlignment.Stretch,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             PlaceholderText = "请在此输入白名单配置，每行一条记录。\n" +
                               "示例：\n" +
@@ -117,7 +119,7 @@ public partial class TriggerSettingsPageViewModel : ViewModel
         p.ShowDialog();
         if (p.DialogResult == true)
         {
-            File.WriteAllText(path, multilineTextBox.Text);
+            File.WriteAllText(Global.Absolute(path), multilineTextBox.Text);
             GameTaskManager.RefreshTriggerConfigs();
         }
     }

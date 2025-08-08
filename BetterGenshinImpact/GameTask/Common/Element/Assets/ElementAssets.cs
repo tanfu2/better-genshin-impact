@@ -1,4 +1,5 @@
-﻿using BetterGenshinImpact.Core.Recognition;
+﻿using System;
+using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.GameTask.Model;
 using BetterGenshinImpact.Helpers.Extensions;
 using OpenCvSharp;
@@ -13,6 +14,7 @@ public class ElementAssets : BaseAssets<ElementAssets>
     public RecognitionObject BtnBlackCancel;
     public RecognitionObject BtnOnlineYes;
     public RecognitionObject BtnOnlineNo;
+    public Lazy<RecognitionObject> BtnExitDoor;
 
     public RecognitionObject PaimonMenuRo;
     public RecognitionObject BlueTrackPoint;
@@ -62,6 +64,7 @@ public class ElementAssets : BaseAssets<ElementAssets>
     public RecognitionObject AYuanMOlaRo;
     public RecognitionObject AYuanExpBottleBigRo;
     public RecognitionObject AYuanExpBottleSmallRo;
+    public RecognitionObject FingerIconRo;
 
     public RecognitionObject LeylineDisorderIconRo;
 
@@ -110,6 +113,13 @@ public class ElementAssets : BaseAssets<ElementAssets>
             TemplateImageMat = GameTaskManager.LoadAssetImage(@"Common\Element", "btn_online_no.png"),
             Use3Channels = true
         }.InitTemplate();
+        BtnExitDoor = new Lazy<RecognitionObject>(() => new RecognitionObject
+        {
+            Name = "BtnExitDoor",
+            RecognitionType = RecognitionTypes.TemplateMatch,
+            TemplateImageMat = GameTaskManager.LoadAssetImage(@"Common\Element", "btn_exit_door.png"),
+            DrawOnWindow = false
+        }.InitTemplate());
 
         // 派蒙菜单
         // 此图38x40 小地图210x210 小地图左上角位置 24,-15
@@ -440,6 +450,14 @@ public class ElementAssets : BaseAssets<ElementAssets>
             RegionOfInterest = new Rect(0, 0, CaptureRect.Width * 7 / 10, CaptureRect.Height),
             DrawOnWindow = false
         }.InitTemplate();
+        FingerIconRo = new RecognitionObject
+        {
+            Name = "尘歌壶小手",
+            RecognitionType = RecognitionTypes.TemplateMatch,
+            TemplateImageMat = GameTaskManager.LoadAssetImage(@"Common\Element", "finger.png"),
+            RegionOfInterest = new Rect(CaptureRect.Width - (int)(650*AssetScale), 0, (int)(80 * AssetScale), (int)(80 * AssetScale)),
+            DrawOnWindow = false
+        }.InitTemplate();
         LeylineDisorderIconRo = new RecognitionObject
         {
             Name = "LeylineDisorderIcon",
@@ -448,5 +466,7 @@ public class ElementAssets : BaseAssets<ElementAssets>
             RegionOfInterest = new Rect(0, 0, (int)(200 * AssetScale), (int)(200 * AssetScale)),
             DrawOnWindow = false
         }.InitTemplate();
+
+
     }
 }

@@ -30,6 +30,7 @@ public class Waypoint
         public string Description { get; set; } = "";
         //normal 小怪,elite 精英,legendary 传奇
         public string MonsterTag { get; set; }
+        public bool EnableMonsterLootSplit { get; set; } = false;
     }
 
 
@@ -55,4 +56,9 @@ public class Waypoint
     public string? Action { get; set; }
     
     public string? ActionParams { get; set; }
+    
+    /// <summary>
+    /// 怪物、特产
+    /// </summary>
+    public List<MaterialInfo> Items { get; set; } = [];
 }
